@@ -1,5 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.2.41'
+    ext {
+        kotlin_version = 'latest.release'
+        ktor_version = 'latest.release'
+    }
 
     repositories {
         mavenCentral()
@@ -17,15 +20,23 @@ group 'cm.moca.l1k'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'kotlin'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/ktor' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    compile "io.ktor:ktor-server-core:$ktor_version"
+    compile "io.ktor:ktor-server-netty:$ktor_version"
+    compile "io.ktor:ktor-network:$ktor_version"
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
