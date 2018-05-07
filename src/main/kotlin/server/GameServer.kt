@@ -19,7 +19,7 @@ object GameServer {
         val timezone = "JST"
         val encoding = "utf-8"
         val url = "jdbc:mysql://$hostname:$port/$database?useUnicode=true&serverTimezone=$timezone&characterEncoding=$encoding"
-        val driver = "com.mysql.cj.jdbc.Driver"
+        val driver = "com.mysql.jdbc.Driver"
         db = Database.connect(url, driver, user, password)
 
         run()
