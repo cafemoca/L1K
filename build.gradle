@@ -2,6 +2,8 @@ buildscript {
     ext {
         kotlin_version = 'latest.release'
         ktor_version = 'latest.release'
+        exposed_version = 'latest.release'
+        mysql_version = 'latest.release'
     }
 
     repositories {
@@ -28,6 +30,7 @@ repositories {
     mavenCentral()
     maven { url 'https://dl.bintray.com/kotlin/ktor' }
     maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
+    maven { url 'https://dl.bintray.com/kotlin/exposed/' }
 }
 
 dependencies {
@@ -36,6 +39,10 @@ dependencies {
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "io.ktor:ktor-network:$ktor_version"
+
+    compile "mysql:mysql-connector-java:$mysql_version"
+
+    compile "org.jetbrains.exposed:exposed:$exposed_version"
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

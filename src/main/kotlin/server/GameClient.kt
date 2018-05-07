@@ -33,10 +33,7 @@ class GameClient(private val socket: Socket) {
     suspend fun run() {
         try {
             while (true) {
-                println("read start")
                 val data = readPacket()
-                val opcode = data[4].toInt() and 0xFF
-                println("handle packet")
                 handler.handlePacket(data)
             }
         } catch (e: Exception) {
