@@ -8,13 +8,15 @@ class PacketHandler(private val client: GameClient) {
     fun handlePacket(data: ByteArray) {
         val opcode = data[4].toInt() and 0xFF
         when (opcode) {
-            Opcode.C_LOGIN.value -> AccountLogin(data, client)
-            Opcode.C_EXTENDED_PROTOBUF.value -> {
-                val hb = data[5]
-                val lb = data[6]
-                val excode = lb * 256 + hb
-                when (excode) {
-                    ProtocolId.CS_CLIENT_VERSION_INFO.value -> VersionCheck(data, client)
+            _ClientOpcode.C_LOGIN.value -> AccountLogin(data, client)
+            _ClientOpcode.C_CREATE_CUSTOM_CHARACTER.value -> CreateCharacter(data, client)
+            _ClientOpcode.C_EXTENDED_PROTOBUF.value -> {
+                val hb = data[5].toInt() and 0xFF
+                val lb = data[6].toInt() and 0xFF
+                val protocol = lb * 256 + hb
+                when (protocol) {
+                    _ClientProtocolId.CS_CLIENT_VERSION_INFO.value -> VersionCheck(data, client)
+                    _ClientProtocolId.CS_STAT_RENEWAL_CALC_INFO_REQ.value -> CharStatCalculation(data, client)
                 }
             }
         }

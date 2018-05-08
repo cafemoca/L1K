@@ -1,11 +1,11 @@
 package cm.moca.l1k.server.packets.server
 
-import cm.moca.l1k.server.packets.Opcode
+import cm.moca.l1k.server.packets._ServerOpcode
 
 class LoginResult(reason: Reason) : _ServerPacket() {
 
     init {
-        writeOpcode(Opcode.S_LOGIN_CHECK.value)
+        writeOpcode(_ServerOpcode.S_LOGIN_CHECK.value)
         writeByte(reason.value)
         writeInt(0)
         writeInt(0)

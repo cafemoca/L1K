@@ -1,6 +1,9 @@
 package cm.moca.l1k.server.packets.client
 
+import cm.moca.l1k.server.packets._ServerOpcode
+import cm.moca.l1k.server.packets._ClientProtocolId
 import kotlinx.coroutines.experimental.io.ByteBuffer
+import kotlinx.coroutines.experimental.launch
 import java.nio.charset.Charset
 import kotlin.math.min
 
@@ -8,17 +11,26 @@ abstract class _ClientPacket(data: ByteArray) {
 
     private val bs = ByteBuffer.wrap(data)
 
+    var opcode: _ClientOpcode? = null
+    var protocol: _ClientProtocolId? = null
+
     init {
-        skip(OFFSET)
+        launch {
+            bs.position(4)
+            opcode = _ClientOpcode.fromInt(readByte())
+            if (opcode == _ClientOpcode.C_EXTENDED_PROTOBUF) {
+                protocol = _ClientProtocolId.fromInt(readShort())
+            }
+        }
     }
 
     fun reset() {
         bs.reset()
-        skip(OFFSET)
+        skip(if (protocol != null) 7 else 5)
     }
 
     fun skip(skip: Int) {
-        bs.position(bs.position() + OFFSET)
+        bs.position(bs.position() + if (protocol != null) 7 else 5)
     }
 
     suspend fun readInt(): Int {
@@ -44,7 +56,9 @@ abstract class _ClientPacket(data: ByteArray) {
     }
 
     suspend fun readShort(): Int {
-        return bs.short.toInt() and 0xFF
+        val hb = bs.get().toInt() and 0xFF
+        val lb = bs.get().toInt() and 0xFF
+        return lb * 256 + hb
     }
 
     suspend fun readDouble(): Double {
@@ -71,7 +85,6 @@ abstract class _ClientPacket(data: ByteArray) {
 
     companion object {
         private val CLIENT_LANGUAGE_CODE = Charset.forName("SJIS")
-        private val OFFSET = 5
     }
 
 }

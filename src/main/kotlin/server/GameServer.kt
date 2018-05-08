@@ -1,9 +1,13 @@
 package cm.moca.l1k.server
 
+import cm.moca.l1k.server.datatables.Accounts
+import cm.moca.l1k.server.datatables.Characters
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.InetSocketAddress
 
 object GameServer {
@@ -21,6 +25,10 @@ object GameServer {
         val url = "jdbc:mysql://$hostname:$port/$database?useUnicode=true&serverTimezone=$timezone&characterEncoding=$encoding"
         val driver = "com.mysql.jdbc.Driver"
         db = Database.connect(url, driver, user, password)
+
+        transaction {
+            create(Accounts, Characters)
+        }
 
         run()
     }

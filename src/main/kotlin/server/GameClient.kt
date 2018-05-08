@@ -1,5 +1,7 @@
 package cm.moca.l1k.server
 
+import cm.moca.l1k.server.controllers.status.BasicStatus
+import cm.moca.l1k.server.models.Account
 import cm.moca.l1k.server.packets.Blowfish
 import cm.moca.l1k.server.packets.PacketHandler
 import cm.moca.l1k.server.packets.server.ServerKey
@@ -20,6 +22,10 @@ class GameClient(private val socket: Socket) {
     private val handler = PacketHandler(this)
 
     private var blowfish: Blowfish? = null
+
+    var createCharStats: BasicStatus? = null
+
+    var account: Account? = null
 
     init {
         launch {

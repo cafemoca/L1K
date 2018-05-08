@@ -11,12 +11,13 @@ object AuthController {
 
     fun authorize(client: GameClient, ac: String, pw: String) {
         transaction {
-            val account = Account.find { Accounts.accountName eq ac }.singleOrNull()
+            var account = Account.find { Accounts.accountName eq ac }.singleOrNull()
             if (account == null) {
-                create(ac, pw)
+                account = create(ac, pw)
+                success(client, account)
             } else {
                 if (account.password == pw) {
-                    success(client, ac)
+                    success(client, account)
                 } else {
                     denied(client)
                 }
@@ -24,16 +25,17 @@ object AuthController {
         }
     }
 
-    fun create(ac: String, pw: String) {
-        Account.new {
+    fun create(ac: String, pw: String): Account {
+        return Account.new {
             accountName = ac
             password = pw
         }
     }
 
-    fun success(client: GameClient, acount: String) {
+    fun success(client: GameClient, account: Account) {
         client.sendPacket(LoginResult(LoginResult.Reason.REASON_LOGIN_OK))
         client.sendPacket(CharacterCount(0, 4))
+        client.account = account
     }
 
     fun denied(client: GameClient) {
