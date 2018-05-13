@@ -1,11 +1,9 @@
 package cm.moca.l1k.server
 
-import cm.moca.l1k.server.controllers.status.BasicStatus
-import cm.moca.l1k.server.models.Account
-import cm.moca.l1k.server.packets.Blowfish
+import cm.moca.l1k.server.packets.PacketBlowfish
 import cm.moca.l1k.server.packets.PacketHandler
 import cm.moca.l1k.server.packets.server.ServerKey
-import cm.moca.l1k.server.packets.server._ServerPacket
+import cm.moca.l1k.server.packets.server.ServerPacket
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
@@ -16,52 +14,18 @@ import kotlinx.coroutines.experimental.runBlocking
 
 class GameClient(private val socket: Socket) {
 
-    private val input = socket.openReadChannel()
+    private var input = socket.openReadChannel()
     private val output = socket.openWriteChannel()
 
     private val handler = PacketHandler(this)
-
-    private var blowfish: Blowfish? = null
-
-    var createCharStats: BasicStatus? = null
-
-    var account: Account? = null
+    private var blowfish: PacketBlowfish? = null
 
     init {
+        val key = (Math.random() * 2147483647).toInt()
+        blowfish = PacketBlowfish(key.toLong())
+        val packet = ServerKey(key)
+        val content = packet.content
         launch {
-            val key = (Math.random() * 2147483647).toInt()
-            blowfish = Blowfish(key.toLong())
-            sendRawPacket(ServerKey(key))
-            run()
-        }
-    }
-
-    suspend fun run() {
-        try {
-            while (true) {
-                val data = readPacket()
-                handler.handlePacket(data)
-            }
-        } catch (e: Exception) {
-        } finally {
-            close()
-        }
-    }
-
-    private suspend fun readPacket(): ByteArray {
-        return async {
-            val low = input.readByte()
-            val high = input.readByte()
-            val size = ((high * 256 + low) and 0xFF) - 2
-            var data = ByteArray(size)
-            input.readFully(data, 0, size)
-            blowfish!!.decrypt(data)
-        }.await()
-    }
-
-    fun sendRawPacket(packet: _ServerPacket) {
-        runBlocking {
-            val content = packet.content
             output.run {
                 val size = packet.size + 2
                 writeByte(size and 0xFF)
@@ -69,10 +33,34 @@ class GameClient(private val socket: Socket) {
                 writeAvailable(content)
                 flush()
             }
+            run()
         }
     }
 
-    fun sendPacket(packet: _ServerPacket) {
+    private suspend fun run() {
+        try {
+            while (true) {
+                val data = receive()
+                handler.receive(data)
+            }
+        } catch (e: Exception) {
+        } finally {
+            close()
+        }
+    }
+
+    private suspend fun receive(): ByteArray {
+        return runBlocking {
+            val low = input.readByte()
+            val high = input.readByte()
+            val size = ((high * 256 + low) and 0xFF) - 2
+            var data = ByteArray(size)
+            input.readFully(data, 0, size)
+            blowfish!!.decrypt(data)
+        }
+    }
+
+    fun send(packet: ServerPacket) {
         runBlocking {
             val content = packet.content
             blowfish!!.encrypt(content)
@@ -86,9 +74,10 @@ class GameClient(private val socket: Socket) {
         }
     }
 
-    fun close() {
+    private fun close() {
         socket.close()
         socket.dispose()
+        //this.close()
     }
 
 }

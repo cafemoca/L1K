@@ -2,7 +2,7 @@ package cm.moca.l1k.server.controllers
 
 import java.util.Random
 
-object CalcStatController {
+object StatusCalculator {
 
     private val random = Random()
 

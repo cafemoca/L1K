@@ -1,4 +1,4 @@
-package cm.moca.l1k.server.models
+package cm.moca.l1k.server.models.accounts
 
 import cm.moca.l1k.server.datatables.Accounts
 import org.jetbrains.exposed.dao.EntityID

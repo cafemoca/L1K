@@ -2,7 +2,7 @@ package cm.moca.l1k.server.packets
 
 import kotlin.experimental.xor
 
-class Blowfish(seed: Long) {
+class PacketBlowfish(seed: Long) {
 
     private val eb: ByteArray
     private val db: ByteArray

@@ -1,9 +1,8 @@
 package cm.moca.l1k.server.packets.server
 
-import cm.moca.l1k.server.packets._ClientProtocolId
-import cm.moca.l1k.server.packets._ServerOpcode
+import cm.moca.l1k.server.packets.ServerOpcode
 
-class ServerVersionInfo : _ServerPacket() {
+class ServerVersionInfo : ServerPacket() {
 
     init {
         val buildNumber = intArrayOf(0)
@@ -13,8 +12,8 @@ class ServerVersionInfo : _ServerPacket() {
         val serverId = 0
         val countryCode = 4
 
-        writeOpcode(_ServerOpcode.S_EXTENDED_PROTOBUF.value)
-        writeShort(_ServerProtocolId.SC_SERVER_VERSION_INFO.value)
+        writeOpcode(ServerOpcode.S_EXTENDED_PROTOBUF.value)
+        writeShort(ServerProtocolId.SC_SERVER_VERSION_INFO.value)
 
         writeByte(0x08)
         writeBoolean(checkVersion) //

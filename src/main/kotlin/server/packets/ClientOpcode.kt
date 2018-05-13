@@ -1,6 +1,6 @@
 package cm.moca.l1k.server.packets.client
 
-enum class _ClientOpcode(val value: Int) {
+enum class ClientOpcode(val value: Int) {
 
     C_ACCEPT_XCHG(0),
     C_ACTION(0),
@@ -144,8 +144,8 @@ enum class _ClientOpcode(val value: Int) {
     ;
 
     companion object {
-        private val map = _ClientOpcode.values().associateBy(_ClientOpcode::value)
-        fun fromInt(type: Int): _ClientOpcode? = map[type]
+        private val map = ClientOpcode.values().associateBy(ClientOpcode::value)
+        fun fromInt(type: Int): ClientOpcode? = map[type]
     }
 
 }

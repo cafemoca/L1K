@@ -1,6 +1,6 @@
 package cm.moca.l1k.server.packets
 
-enum class _ServerOpcode(val value: Int) {
+enum class ServerOpcode(val value: Int) {
 
     S_ABILITY_SCORES(0),
     S_AC(0),
@@ -139,8 +139,8 @@ enum class _ServerOpcode(val value: Int) {
     ;
 
     companion object {
-        private val map = _ServerOpcode.values().associateBy(_ServerOpcode::value)
-        fun fromInt(type: Int): _ServerOpcode? {
+        private val map = ServerOpcode.values().associateBy(ServerOpcode::value)
+        fun fromInt(type: Int): ServerOpcode? {
             return map[type]
         }
     }

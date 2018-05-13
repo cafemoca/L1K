@@ -1,11 +1,11 @@
 package cm.moca.l1k.server.packets.server
 
-import cm.moca.l1k.server.packets._ServerOpcode
+import cm.moca.l1k.server.packets.ServerOpcode
 
-class CharacterCount(count: Int, maxSlot: Int) : _ServerPacket() {
+class CharacterCount(count: Int, maxSlot: Int) : ServerPacket() {
 
     init {
-        writeOpcode(_ServerOpcode.S_NUM_CHARACTER.value)
+        writeOpcode(ServerOpcode.S_NUM_CHARACTER.value)
         writeByte(count)
         writeByte(maxSlot)
     }

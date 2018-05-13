@@ -1,17 +1,24 @@
 package cm.moca.l1k.server.packets.client
 
-import cm.moca.l1k.server.GameClient
-import cm.moca.l1k.server.controllers.AuthController
-import cm.moca.l1k.server.packets.server.LoginResult
-import kotlinx.coroutines.experimental.launch
+import cm.moca.l1k.server.controllers.AuthorizeController
+import cm.moca.l1k.server.packets.PacketHandler
+import java.nio.ByteBuffer
 
-class AccountLogin(data: ByteArray, client: GameClient) : _ClientPacket(data) {
+class AccountLogin(buffer: ByteBuffer) : ClientPacket(buffer) {
+
+    private var account: String = ""
+    private var password: String = ""
 
     init {
-        launch {
-            val account = readString()
-            val password = readString()
-            AuthController.authorize(client, account, password)
+        account = readString()
+        password = readString()
+    }
+
+    fun action(handler: PacketHandler) {
+        val account = AuthorizeController.find(account)
+        AuthorizeController.auth(account, password).forEach(handler::send)
+        if (account != null) {
+            handler.activateAccount(account)
         }
     }
 

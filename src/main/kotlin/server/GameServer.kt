@@ -1,7 +1,7 @@
 package cm.moca.l1k.server
 
 import cm.moca.l1k.server.datatables.Accounts
-import cm.moca.l1k.server.datatables.Characters
+import cm.moca.l1k.server.datatables.PlayerCharacters
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -27,7 +27,7 @@ object GameServer {
         db = Database.connect(url, driver, user, password)
 
         transaction {
-            create(Accounts, Characters)
+            create(Accounts, PlayerCharacters)
         }
 
         run()

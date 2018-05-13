@@ -1,11 +1,11 @@
 package cm.moca.l1k.server.packets.server
 
-import cm.moca.l1k.server.packets._ServerOpcode
+import cm.moca.l1k.server.packets.ServerOpcode
 
-class CreateCharacterResult(reason: Reason) : _ServerPacket() {
+class CreateCharacterResult(reason: Reason) : ServerPacket() {
 
     init {
-        writeOpcode(_ServerOpcode.S_CREATE_CHARACTER_CHECK.value)
+        writeOpcode(ServerOpcode.S_CREATE_CHARACTER_CHECK.value)
         writeByte(reason.value)
         writeInt(0)
         writeInt(0)
