@@ -19,11 +19,9 @@ class PacketHandler(private val client: GameClient) {
         val buffer = ByteBuffer.wrap(data)
         buffer.order(ByteOrder.LITTLE_ENDIAN)
 
-        receiveCount++
-        var header = buffer.int
-        if (header != receiveCount) {
-            // 不正なパケットが送信された可能性が高い
-            println("receiveCount: $receiveCount, headerCount: $header")
+        if (buffer.int != ++receiveCount) {
+            deactivateAccount()
+            client.close()
         }
 
         val opcode = buffer.get().toInt() and 0xFF
@@ -31,10 +29,11 @@ class PacketHandler(private val client: GameClient) {
         when (opcode) {
             ClientOpcode.C_LOGIN.value -> AccountLogin(buffer).action(this)
             ClientOpcode.C_CREATE_CUSTOM_CHARACTER.value -> CreateCharacter(buffer).action(this)
+            ClientOpcode.C_ENTER_WORLD.value -> LoginToWorld(buffer).action(this)
             ClientOpcode.C_EXTENDED_PROTOBUF.value -> {
-                val proto = buffer.short.toInt()
-                println("protobuf: $proto")
-                when (proto) {
+                val protobuf = buffer.short.toInt()
+                println("protobuf: $protobuf")
+                when (protobuf) {
                     ClientProtocolId.CS_CLIENT_VERSION_INFO.value -> VersionCheck(buffer).action(this)
                     ClientProtocolId.CS_STAT_RENEWAL_CALC_INFO_REQ.value -> StatusModifierCalculation(buffer).action(this)
                     else -> UnknownPacket(buffer)

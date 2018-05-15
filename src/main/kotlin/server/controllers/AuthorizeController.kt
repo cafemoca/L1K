@@ -42,7 +42,6 @@ object AuthorizeController {
         }
         val charCount = characters.size
         val maxSlot = 8
-        println(charCount)
         return sequenceOf(
                 LoginResult(LoginResult.Reason.REASON_LOGIN_OK),
                 CharacterCount(charCount, maxSlot)) +

@@ -74,7 +74,7 @@ class GameClient(private val socket: Socket) {
         }
     }
 
-    private fun close() {
+    fun close() {
         socket.close()
         socket.dispose()
         //this.close()
